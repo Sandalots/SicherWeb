@@ -118,21 +118,27 @@
             const imgBytes = await fetch(imgUrl).then(res => res.arrayBuffer());
             const img = await pdfDoc.embedPng(imgBytes);
 
-            // Add a new page for the image if needed
-            if (y < margin + 100) {
+            // Calculate image dimensions
+            const imgWidth = 400; // Adjust image width
+            const imgHeight = (img.height / img.width) * imgWidth; // Maintain aspect ratio
+
+            // Check if there is enough space for the image on the current page
+            if (y - imgHeight - 20 < margin) {
+                // Add a new page if the image doesn't fit
                 page = pdfDoc.addPage([595.28, 841.89]);
                 y = page.getHeight() - margin;
             }
 
             // Draw the image on the PDF
-            const imgWidth = 400; // Adjust image width
-            const imgHeight = (img.height / img.width) * imgWidth; // Maintain aspect ratio
             page.drawImage(img, {
                 x: (page.getWidth() - imgWidth) / 2, // Center the image horizontally
-                y: y - imgHeight - 20, // Leave some space above the image
+                y: y - imgHeight, // Position the image
                 width: imgWidth,
                 height: imgHeight,
             });
+
+            // Update the y position after drawing the image
+            y -= imgHeight + 20; // Leave some space below the image
         }
 
         // Serialize the PDF to bytes

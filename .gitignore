@@ -1,0 +1,9 @@
+# the uploads directory
+/uploads
+
+# any output* files
+output*
+
+# the performance_plots.png in the static directory
+/static/performance_plots.png
+
