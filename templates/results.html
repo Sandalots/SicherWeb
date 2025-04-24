@@ -1,38 +1,122 @@
+<!-- filepath: /Users/sandymacdonald/Documents/Clones/SicherWeb/templates/results.html -->
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>Sicher Compilation Results for {{ filename }}</h1>
-{% if results.error %}
-    <h2>Error</h2>
-    <p>{{ results.error }}</p>
-{% else %}
-    <h2>Tokens:</h2>
-    <pre>{{ results.tokens }}</pre>
+<div id="results-container">
+    <h1>Sicher Compilation Results for {{ filename }}</h1>
+    {% if results.error %}
+        <h2>Error</h2>
+        <p>{{ results.error }}</p>
+    {% else %}
+        <h2>Tokens:</h2>
+        <pre>{{ results.tokens }}</pre>
 
-    <h2>Tokeniser Module Output:</h2>
-    <pre>{{ results.tokeniser_log }}</pre>
+        <h2>Tokeniser Module Output:</h2>
+        <pre>{{ results.tokeniser_log }}</pre>
 
-    <h2>Parser Module Output:</h2>
-    <pre>{{ results.parser_log }}</pre>
+        <h2>Parser Module Output:</h2>
+        <pre>{{ results.parser_log }}</pre>
 
-    <h2>Analyser Module/ Abstract Syntax Tree (AST):</h2>
-    <pre>{{ results.ast }}</pre>
+        <h2>Analyser Module/ Abstract Syntax Tree (AST):</h2>
+        <pre>{{ results.ast }}</pre>
 
-    <h2>Code Generator Module/ Generated Code:</h2>
-    <pre>{{ results.generated_code }}</pre>
+        <h2>Code Generator Module/ Generated Code:</h2>
+        <pre>{{ results.generated_code }}</pre>
 
-    <h2>Performance Metrics:</h2>
-    <img src="{{ url_for('static', filename='performance_plots.png') }}" alt="Performance Plots">
+        <h2>Performance Metrics:</h2>
+        <img src="{{ url_for('static', filename='performance_plots.png') }}" alt="Performance Plots">
 
-    <h2>Sicher Diagnostics:</h2>
-    <ul>
-        {% for key, value in results.diagnostics.items() %}
-            <li><strong>{{ key }}:</strong> {{ value }}</li>
-        {% endfor %}
-    </ul>
+        <h2>Sicher Diagnostics:</h2>
+        <ul>
+            {% for key, value in results.diagnostics.items() %}
+                <li><strong>{{ key }}:</strong> {{ value }}</li>
+            {% endfor %}
+        </ul>
 
-    <h2>Binary Status:</h2>
-    <p>{{ results.binary }}</p>
-    <p>Please use either the CLI or GUI version of Sicher to execute and run the binary.</p>
-{% endif %}
+        <h2>Binary Status:</h2>
+        <p>{{ results.binary }}</p>
+        <p>Please use either the CLI or GUI version of Sicher to execute and run the binary.</p>
+    {% endif %}
+</div>
+
+<!-- Add Save to PDF Button -->
+<button id="saveToPdfButton" class="upload-button">Save to PDF</button>
+
+<!-- Include pdf-lib Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+<script>
+    document.getElementById('saveToPdfButton').addEventListener('click', async function () {
+        // Import pdf-lib
+        const { PDFDocument, rgb } = PDFLib;
+
+        // Create a new PDF document
+        const pdfDoc = await PDFDocument.create();
+
+        // Add the first page to the PDF
+        let page = pdfDoc.addPage([595.28, 841.89]); // A4 size in points (width x height)
+
+        // Get the content of the results container
+        const content = document.querySelector('#results-container').innerText;
+
+        // Define font size and margins
+        const fontSize = 12;
+        const margin = 50;
+        const textWidth = page.getWidth() - margin * 2;
+
+        // Function to wrap text
+        function wrapText(text, maxWidth, fontSize) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = '';
+
+            for (const word of words) {
+                const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                const testWidth = fontSize * 0.6 * testLine.length; // Approximate width of text
+                if (testWidth > maxWidth) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+            return lines;
+        }
+
+        // Add content to the PDF
+        const lines = content.split('\n');
+        let y = page.getHeight() - margin;
+
+        for (const line of lines) {
+            const wrappedLines = wrapText(line, textWidth, fontSize);
+            for (const wrappedLine of wrappedLines) {
+                if (y < margin + fontSize) {
+                    // Add a new page if the content exceeds the current page
+                    page = pdfDoc.addPage([595.28, 841.89]);
+                    y = page.getHeight() - margin;
+                }
+                page.drawText(wrappedLine, {
+                    x: margin,
+                    y: y,
+                    size: fontSize,
+                    color: rgb(0, 0, 0), // Black text
+                });
+                y -= fontSize + 5; // Adjust line spacing
+            }
+        }
+
+        // Serialize the PDF to bytes
+        const pdfBytes = await pdfDoc.save();
+
+        // Trigger download
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'results.pdf';
+        link.click();
+    });
+</script>
 {% endblock %}

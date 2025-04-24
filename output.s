@@ -28,22 +28,33 @@ Lloh5:
 	blr	x19
 Lloh6:
 	adrp	x0, _.str.3@GOTPAGE
-	mov	w8, #4
 Lloh7:
 	ldr	x0, [x0, _.str.3@GOTPAGEOFF]
-	str	w8, [sp, #12]
-	str	x8, [sp]
 	blr	x19
 Lloh8:
 	adrp	x0, _.str.4@GOTPAGE
 Lloh9:
 	ldr	x0, [x0, _.str.4@GOTPAGEOFF]
 	blr	x19
+Lloh10:
+	adrp	x0, _.str.5@GOTPAGE
+Lloh11:
+	ldr	x0, [x0, _.str.5@GOTPAGEOFF]
+	str	wzr, [sp, #12]
+	str	xzr, [sp]
+	blr	x19
+Lloh12:
+	adrp	x0, _.str.6@GOTPAGE
+Lloh13:
+	ldr	x0, [x0, _.str.6@GOTPAGEOFF]
+	blr	x19
 	ldp	x29, x30, [sp, #32]
 	mov	w0, wzr
 	ldp	x20, x19, [sp, #16]
 	add	sp, sp, #48
 	ret
+	.loh AdrpLdrGot	Lloh12, Lloh13
+	.loh AdrpLdrGot	Lloh10, Lloh11
 	.loh AdrpLdrGot	Lloh8, Lloh9
 	.loh AdrpLdrGot	Lloh6, Lloh7
 	.loh AdrpLdrGot	Lloh4, Lloh5
@@ -53,15 +64,21 @@ Lloh9:
 
 	.section	__TEXT,__const
 _.str.1:
-	.asciz	"Hello, World!"
+	.asciz	"A fools' thought, stemming from the beginning and bit shifting down to dark. This was his tale, a tale as short as time itself."
 
 _.str.2:
 	.asciz	"\n"
 
 _.str.3:
-	.asciz	"%d"
+	.asciz	"Food for thought."
 
 _.str.4:
+	.asciz	"\n"
+
+_.str.5:
+	.asciz	"%d"
+
+_.str.6:
 	.asciz	"\n"
 
 .subsections_via_symbols
