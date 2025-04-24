@@ -45,6 +45,9 @@
 <!-- Include pdf-lib Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
+<!-- Include pdf-lib Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
 <script>
     document.getElementById('saveToPdfButton').addEventListener('click', async function () {
         // Import pdf-lib
@@ -106,6 +109,30 @@
                 });
                 y -= fontSize + 5; // Adjust line spacing
             }
+        }
+
+        // Embed the performance plot image
+        const imgElement = document.querySelector('img[alt="Performance Plots"]');
+        if (imgElement) {
+            const imgUrl = imgElement.src;
+            const imgBytes = await fetch(imgUrl).then(res => res.arrayBuffer());
+            const img = await pdfDoc.embedPng(imgBytes);
+
+            // Add a new page for the image if needed
+            if (y < margin + 100) {
+                page = pdfDoc.addPage([595.28, 841.89]);
+                y = page.getHeight() - margin;
+            }
+
+            // Draw the image on the PDF
+            const imgWidth = 400; // Adjust image width
+            const imgHeight = (img.height / img.width) * imgWidth; // Maintain aspect ratio
+            page.drawImage(img, {
+                x: (page.getWidth() - imgWidth) / 2, // Center the image horizontally
+                y: y - imgHeight - 20, // Leave some space above the image
+                width: imgWidth,
+                height: imgHeight,
+            });
         }
 
         // Serialize the PDF to bytes
