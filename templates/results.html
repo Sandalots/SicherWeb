@@ -142,7 +142,10 @@
         const blob = new Blob([pdfBytes], { type: 'application/pdf' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'results.pdf';
+
+        // Use the filename variable passed from Flask to name the PDF
+        const filename = "{{ filename|escape }}"; // Escaped for safety
+        link.download = `${filename}_results.pdf`;
         link.click();
     });
 </script>
