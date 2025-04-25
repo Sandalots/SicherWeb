@@ -1,36 +1,32 @@
-/* General Styling */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    display: flex; /* Use flexbox for layout */
-    height: 100vh; /* Full viewport height */
-    background-color: #2D2B55; /* Normal purple background */
-    color: #FAD000; /* Yellow text */
+    display: flex; 
+    height: 100vh; 
+    background-color: #2D2B55; 
+    color: #FAD000; 
 }
 
-/* Sidebar Styling */
 .sidebar {
-    width: 20%; /* Fixed width for the sidebar */
-    background-color: #1E1E3F; /* Darker purple for the sidebar */
-    color: #FAD000; /* Yellow text */
+    width: 20%; 
+    background-color: #1E1E3F; 
+    color: #FAD000; 
     padding: 20px;
-    box-sizing: border-box; /* Include padding in width/height calculations */
-    overflow-y: auto; /* Scrollable if content overflows */
-    height: 100%; /* Full height of the viewport */
-    position: fixed; /* Fix the sidebar to the left */
+    box-sizing: border-box; 
+    overflow-y: auto; 
+    height: 100%; 
+    position: fixed; 
 }
 
-/* Content Styling */
 .content {
-    margin-left: 20%; /* Leave space for the sidebar */
+    margin-left: 20%; 
     padding: 20px;
-    background-color: #2D2B55 !important; /* Normal purple background */
-    color: #FAD000; /* Yellow text */
-    height: 100%; /* Full height of the viewport */
-    overflow-y: auto; /* Scrollable if content overflows */
+    background-color: #2D2B55 !important; 
+    color: #FAD000; 
+    height: 100%; 
+    overflow-y: auto; 
 }
 
-/* Links in Sidebar */
 .sidebar ul {
     list-style: none;
     padding: 0;
@@ -41,7 +37,7 @@ body {
 }
 
 .sidebar ul li a {
-    color: #FAD000; /* Yellow links */
+    color: #FAD000; 
     text-decoration: none;
 }
 
@@ -49,15 +45,13 @@ body {
     text-decoration: underline;
 }
 
-/* Headings */
 h1, h2 {
-    color: #FAD000; /* Yellow headings */
+    color: #FAD000; 
 }
 
-/* Buttons */
 button {
-    background-color: #FAD000; /* Yellow button background */
-    color: #2D2B55; /* Purple text */
+    background-color: #FAD000; 
+    color: #2D2B55; 
     border: none;
     padding: 10px 20px;
     font-size: 1em;
@@ -65,23 +59,21 @@ button {
 }
 
 button:hover {
-    background-color: #C9A000; /* Slightly darker yellow on hover */
+    background-color: #C9A000; 
 }
 
-/* Ensure preformatted text wraps properly */
 pre {
-    white-space: pre-wrap; /* Wrap text */
-    word-wrap: break-word; /* Break long words */
-    background-color: #1E1E3F; /* Darker purple for better readability */
+    white-space: pre-wrap; 
+    word-wrap: break-word; 
+    background-color: #1E1E3F; 
     padding: 10px;
     border-radius: 5px;
-    overflow-x: auto; /* Add horizontal scrolling if needed */
-    color: #FAD000; /* Yellow text */
+    overflow-x: auto; 
+    color: #FAD000; 
 }
 
-/* Styling for the "Compile New" link */
 .compile-new {
-    color: #FFA500 !important; /* Orange color */
+    color: #FFA500 !important; 
     font-weight: bold;
     text-decoration: none;
     display: block;
@@ -92,18 +84,16 @@ pre {
     text-decoration: underline;
 }
 
-/* Form container styling */
 .form-container {
-    display: flex; /* Align items horizontally */
-    align-items: center; /* Vertically center the items */
-    gap: 10px; /* Add spacing between the elements */
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
 }
 
-/* Custom file input styling */
 .custom-file-input {
     display: inline-block;
-    background-color: #FFA500; /* Orange background */
-    color: #2D2B55; /* Purple text */
+    background-color: #FFA500; 
+    color: #2D2B55; 
     padding: 10px 20px;
     font-size: 1em;
     font-weight: bold;
@@ -114,17 +104,16 @@ pre {
 }
 
 .custom-file-input:hover {
-    background-color: #C97A00; /* Darker orange on hover */
+    background-color: #C97A00; 
 }
 
 .custom-file-input input[type="file"] {
-    display: none; /* Hide the default file input */
+    display: none; 
 }
 
-/* Upload button styling */
 .upload-button {
-    background-color: #FAD000; /* Purple background */
-    color: #2D2B55; /* Yellow text */
+    background-color: #FAD000; 
+    color: #2D2B55; 
     padding: 10px 20px;
     font-size: 1em;
     font-weight: bold;
@@ -156,13 +145,12 @@ pre {
     border-color: #c3e6cb;
 }
 
-/* style the lists so they have the same background colour and styling as the other items also add word wrapping and hide bullets */
 ul, ol {
-    list-style-type: none; /* Remove bullets */
-    padding: 0; /* Remove padding */
-    margin: 0; /* Remove margin */
-    background-color: #1E1E3F; /* Darker purple for better readability */
-    color: #FAD000; /* Yellow text */
+    list-style-type: none; 
+    padding: 0; 
+    margin: 0; 
+    background-color: #1E1E3F; 
+    color: #FAD000; 
     border-radius: 5px;
-    overflow-x: auto; /* Add horizontal scrolling if needed */
+    overflow-x: auto; 
 }

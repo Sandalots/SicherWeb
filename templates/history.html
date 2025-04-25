@@ -1,11 +1,12 @@
+<!-- Template for past Sicher compilations holder to be put in the layout-->
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>Sicher Compilation History</h1>
+<h1>Sicher Compilation History</h1> <!-- Give user the context that this is the history of their sicher compilations-->
 <ul>
-    {% for filename in history.keys() %}
+    {% for filename in history.keys() %} <!-- for every runned sicher compilation-->
         <li>
-            <a href="/history/{{ filename }}">{{ filename }}</a>
+            <a href="/history/{{ filename }}">{{ filename }}</a> <!-- link to that historic results for said compilation-->
         </li>
     {% endfor %}
 </ul>

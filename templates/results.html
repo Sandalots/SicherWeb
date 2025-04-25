@@ -1,8 +1,8 @@
-<!-- filepath: /Users/sandymacdonald/Documents/Clones/SicherWeb/templates/results.html -->
 {% extends "layout.html" %}
 
 {% block content %}
 <div id="results-container">
+    <!-- Returns the results from a Sicher Compilation-->
     <h1>Sicher Compilation Results for {{ filename }}</h1>
     {% if results.error %}
         <h2>Error</h2>
@@ -39,35 +39,25 @@
     {% endif %}
 </div>
 
-<!-- Add Save to PDF Button -->
 <button id="saveToPdfButton" class="upload-button">Save to PDF</button>
 
-<!-- Include pdf-lib Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-
-<!-- Include pdf-lib Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
 <script>
     document.getElementById('saveToPdfButton').addEventListener('click', async function () {
-        // Import pdf-lib
         const { PDFDocument, rgb } = PDFLib;
 
-        // Create a new PDF document
         const pdfDoc = await PDFDocument.create();
 
-        // Add the first page to the PDF
-        let page = pdfDoc.addPage([595.28, 841.89]); // A4 size in points (width x height)
+        let page = pdfDoc.addPage([595.28, 841.89]);
 
-        // Get the content of the results container
         const content = document.querySelector('#results-container').innerText;
 
-        // Define font size and margins
         const fontSize = 12;
         const margin = 50;
         const textWidth = page.getWidth() - margin * 2;
 
-        // Function to wrap text
         function wrapText(text, maxWidth, fontSize) {
             const words = text.split(' ');
             const lines = [];
@@ -75,7 +65,7 @@
 
             for (const word of words) {
                 const testLine = currentLine + (currentLine ? ' ' : '') + word;
-                const testWidth = fontSize * 0.6 * testLine.length; // Approximate width of text
+                const testWidth = fontSize * 0.6 * testLine.length;
                 if (testWidth > maxWidth) {
                     lines.push(currentLine);
                     currentLine = word;
@@ -89,7 +79,6 @@
             return lines;
         }
 
-        // Add content to the PDF
         const lines = content.split('\n');
         let y = page.getHeight() - margin;
 
@@ -97,7 +86,6 @@
             const wrappedLines = wrapText(line, textWidth, fontSize);
             for (const wrappedLine of wrappedLines) {
                 if (y < margin + fontSize) {
-                    // Add a new page if the content exceeds the current page
                     page = pdfDoc.addPage([595.28, 841.89]);
                     y = page.getHeight() - margin;
                 }
@@ -105,52 +93,43 @@
                     x: margin,
                     y: y,
                     size: fontSize,
-                    color: rgb(0, 0, 0), // Black text
+                    color: rgb(0, 0, 0),
                 });
-                y -= fontSize + 5; // Adjust line spacing
+                y -= fontSize + 5;
             }
         }
 
-        // Embed the performance plot image
         const imgElement = document.querySelector('img[alt="Performance Plots"]');
         if (imgElement) {
             const imgUrl = imgElement.src;
             const imgBytes = await fetch(imgUrl).then(res => res.arrayBuffer());
             const img = await pdfDoc.embedPng(imgBytes);
 
-            // Calculate image dimensions
-            const imgWidth = 400; // Adjust image width
-            const imgHeight = (img.height / img.width) * imgWidth; // Maintain aspect ratio
+            const imgWidth = 400;
+            const imgHeight = (img.height / img.width) * imgWidth;
 
-            // Check if there is enough space for the image on the current page
             if (y - imgHeight - 20 < margin) {
-                // Add a new page if the image doesn't fit
                 page = pdfDoc.addPage([595.28, 841.89]);
                 y = page.getHeight() - margin;
             }
 
-            // Draw the image on the PDF
             page.drawImage(img, {
-                x: (page.getWidth() - imgWidth) / 2, // Center the image horizontally
-                y: y - imgHeight, // Position the image
+                x: (page.getWidth() - imgWidth) / 2,
+                y: y - imgHeight,
                 width: imgWidth,
                 height: imgHeight,
             });
 
-            // Update the y position after drawing the image
-            y -= imgHeight + 20; // Leave some space below the image
+            y -= imgHeight + 20; 
         }
 
-        // Serialize the PDF to bytes
         const pdfBytes = await pdfDoc.save();
 
-        // Trigger download
         const blob = new Blob([pdfBytes], { type: 'application/pdf' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
 
-        // Use the filename variable passed from Flask to name the PDF
-        const filename = "{{ filename|escape }}"; // Escaped for safety
+        const filename = "{{ filename|escape }}";
         link.download = `${filename}_results.pdf`;
         link.click();
     });

@@ -1,18 +1,18 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
-import os
-import sys
+from flask import Flask, request, render_template, redirect, url_for, flash # web frameworks
+import os # getti the path
+import sys # appending the path
+import time # performance metrics
+import psutil # getting mem and cpu usage of sicher
 
 # Add the Sicher core directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../SicherC/src')))
 
-
-from modules.tokeniser import tokenise
-from modules.parser import parse_tokens
-from modules.analyser import create_ast_from_tokens
-from modules.codegenerator import CodeGenerator
-import time
-import psutil
-from sicher import get_diagnostics
+# Sicher Moodules
+from modules.tokeniser import tokenise # Tokeniser module
+from modules.parser import parse_tokens # Parser module
+from modules.analyser import create_ast_from_tokens # Analyser module
+from modules.codegenerator import CodeGenerator # Code Generator module
+from sicher import get_diagnostics # getting sicher diagnostics
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 UPLOAD_FOLDER = 'uploads'
