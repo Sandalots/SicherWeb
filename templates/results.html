@@ -4,28 +4,39 @@
 <div id="results-container">
     <!-- Returns the results from a Sicher Compilation-->
     <h1>Sicher Compilation Results for {{ filename }}</h1>
+
+    <!-- Handle Errors-->
     {% if results.error %}
         <h2>Error</h2>
         <p>{{ results.error }}</p>
+
+    <!-- Show Logs-->
     {% else %}
+        <!-- Tokens -->
         <h2>Tokens:</h2>
         <pre>{{ results.tokens }}</pre>
 
+        <!-- Tokeniser Module Output -->
         <h2>Tokeniser Module Output:</h2>
         <pre>{{ results.tokeniser_log }}</pre>
 
+        <!-- Parser Module Output -->
         <h2>Parser Module Output:</h2>
         <pre>{{ results.parser_log }}</pre>
 
+        <!-- Analyser Module Output -->
         <h2>Analyser Module/ Abstract Syntax Tree (AST):</h2>
         <pre>{{ results.ast }}</pre>
 
+        <!-- Code Generator Module Output -->
         <h2>Code Generator Module/ Generated Code:</h2>
         <pre>{{ results.generated_code }}</pre>
 
+        <!-- Performance Plots -->
         <h2>Performance Metrics:</h2>
         <img src="{{ url_for('static', filename='performance_plots.png') }}" alt="Performance Plots">
 
+        <!-- Diagnostics-->
         <h2>Sicher Diagnostics:</h2>
         <ul>
             {% for key, value in results.diagnostics.items() %}
@@ -33,17 +44,22 @@
             {% endfor %}
         </ul>
 
+        <!-- Compilation Status -->
         <h2>Binary Status:</h2>
         <p>{{ results.binary }}</p>
         <p>Please use either the CLI or GUI version of Sicher to execute and run the binary.</p>
     {% endif %}
 </div>
 
+<!-- Button to save the results to a PDF file -->
 <button id="saveToPdfButton" class="upload-button">Save to PDF</button>
 
+
+<!-- Handling the save to pdf button -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
+<!-- Script to save the above logs and plots to a pdf using pdf-lib -->
 <script>
     document.getElementById('saveToPdfButton').addEventListener('click', async function () {
         const { PDFDocument, rgb } = PDFLib;
