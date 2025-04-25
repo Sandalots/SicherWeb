@@ -14,38 +14,53 @@ from modules.analyser import create_ast_from_tokens # Analyser module
 from modules.codegenerator import CodeGenerator # Code Generator module
 from sicher import get_diagnostics # getting sicher diagnostics
 
+# Creating the Flask app
 app = Flask(__name__, template_folder='templates', static_folder='static')
+
+# Flask configuration
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = 'sicher'
 
+# for storing compilation history
 compilation_history = {} 
 
+# return the compilation history to the template html documents
 @app.context_processor
 def inject_compilation_history():
     return {'compilation_history': compilation_history}
 
+# serve the index page
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# handle c source file uploads
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    # check if the request contains a file
     if 'file' not in request.files:
         flash('No file part in the request.', 'error')
         return redirect(url_for('index'))
     
+    # get the file from the request
     file = request.files['file']
+    
+    # check if user has not selected a file
     if file.filename == '':
         flash('No file selected. Please choose a file to upload.', 'error')
         return redirect(url_for('index'))
     
+    # check if the file is a C source file
     if not file.filename.endswith('.c'):
         flash('Invalid file type. Please upload a C source file.', 'error')
         return redirect(url_for('index'))
     
+    # get the file path
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    
+    # check if the file is empty
     try:
         file.save(filepath)
         if os.stat(filepath).st_size == 0:
@@ -58,17 +73,22 @@ def upload_file():
     
     return redirect(url_for('compile_file', filename=file.filename))
 
+# serve the history layout
 @app.route('/history')
 def history():
     return render_template('history.html', history=compilation_history)
 
+# serve the history of the specified file
 @app.route('/history/<filename>')
 def view_history(filename):
     results = compilation_history.get(filename)
+    
     if not results:
         return f"No history found for {filename}", 404
+    
     return render_template('results.html', filename=filename, results=results)
 
+# compile the uploaded file
 @app.route('/compile/<filename>')
 def compile_file(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -140,6 +160,7 @@ def compile_file(filename):
             )
             cpu_usages.append((cpu_time_used / (end_time - start_time)))
 
+            # Generate performance plots
             from modules.performance_plotter import generate_performance_plots
             fig = generate_performance_plots(compile_times, memory_usages, cpu_usages)
 
@@ -151,12 +172,24 @@ def compile_file(filename):
         diagnostics = get_diagnostics()
         results['diagnostics'] = diagnostics
         
+    # handling errors
+    except FileNotFoundError:
+        results['error'] = f"File {filename} not found."
+    except SyntaxError as e:
+        results['error'] = f"Syntax error in file {filename}: {str(e)}"
+    except MemoryError:
+        results['error'] = "Memory limit exceeded during compilation."
+    except psutil.NoSuchProcess:
+        results['error'] = "Process not found."
     except Exception as e:
         results['error'] = str(e)
 
+    # update the compilation history
     compilation_history[filename] = results
 
+    # return the results for the filename and the rest of the results
     return render_template('results.html', filename=filename, results=results)
 
+# use debug for extra logs
 if __name__ == '__main__':
     app.run(debug=True)
